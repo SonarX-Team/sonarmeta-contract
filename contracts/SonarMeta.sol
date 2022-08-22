@@ -5,14 +5,16 @@ import "./Storage.sol";
 import "./Events.sol";
 import "./ReentrancyGuard.sol";
 import "./Config.sol";
+import "./Governance.sol";
 
 /// @title SonarMeta main contract
 /// @author SonarX Team
-contract SonarMeta is Storage, Events, ReentrancyGuard, Context, Config, Ownable {
+contract SonarMeta is Governance, Storage, Events, ReentrancyGuard, Context, Config, Ownable {
 
-    constructor(address _tokenAddress, address _modelCollectionAddress) {
+    constructor(address _tokenAddress, address _modelCollectionAddress, address _governanceAddress) {
         initializeReentrancyGuard();
 
+        governance = Governance(_governanceAddress);
         ERC20Token = Token(_tokenAddress);
         ERC721ModelCollection = ModelCollection(_modelCollectionAddress);
     }
@@ -23,46 +25,23 @@ contract SonarMeta is Storage, Events, ReentrancyGuard, Context, Config, Ownable
         appliedAirdropWhitelist[_msgSender()] = true;
     }
 
-    function getERC20Balance(address _owner) external returns (uint256) {
-        require(_owner != address(0), "oi0");
-        return ERC20Token.balanceOf(_owner);
-    }
-
-    function approveERC20ToSonarMeta(uint256 _amount) external nonReentrant {
-        require(_amount != 0, "ai0");
-        require(ERC20Token.approve(address(this), _amount), "af");
-    }
-
-    function transferERC20(address _to, uint256 _amount) external nonReentrant {
-        require(_amount != 0, "ai0");
-        require(_to != address(0), "ti0");
-        require(ERC20Token.transfer(_to, _amount), "tf");
-    }
-
     function transferERC20UsingSonarMetaAllowance(address _to, uint256 _amount) external nonReentrant {
+        governance.requireController(_msgSender());
         require(_amount != 0, "ai0");
         require(_to != address(0), "ti0");
         require(ERC20Token.transferFrom(address(this), _to, _amount), "tf");
     }
 
-    function approveGrantERC721ToSonarMeta(uint256 _tokenId, address _to) external nonReentrant {
-        require(_to != address(0), "ti0");
-        ERC721ModelCollection.approveGrant(_to, _tokenId);
-    }
-
-    function approveERC721ToSonarMeta(uint256 _tokenId, address _to) external nonReentrant {
-        require(_to != address(0), "ti0");
-        ERC721ModelCollection.approve(_to, _tokenId);
-    }
-
-    function grantERC721(uint256 _tokenId, address _to) external nonReentrant {
+    function grantERC721UsingSonarMetaApproval(uint256 _tokenId, address _to) external nonReentrant {
+        governance.requireController(_msgSender());
         require(_to != address(0), "ti0");
         address owner = ERC721ModelCollection.ownerOf(_tokenId);
         /// @dev owner cannot be '0' because it is checked inside 'ownerOf'.
         ERC721ModelCollection.grantFrom(owner, _to, _tokenId);
     }
 
-    function transferERC721(uint256 _tokenId, address _to) external nonReentrant {
+    function transferERC721UsingSonarMetaApproval(uint256 _tokenId, address _to) external nonReentrant {
+        governance.requireController(_msgSender());
         require(_to != address(0), "ti0");
         address owner = ERC721ModelCollection.ownerOf(_tokenId);
         /// @dev owner cannot be '0' because it is checked inside 'ownerOf'.
@@ -70,6 +49,7 @@ contract SonarMeta is Storage, Events, ReentrancyGuard, Context, Config, Ownable
     }
 
     function mintERC721(address _to, uint256 _tokenId) external nonReentrant {
+        governance.requireController(_msgSender());
         require(_to!= address(0), "ti0");
         ERC721ModelCollection.mint(_to, _tokenId);
     }

@@ -1,10 +1,11 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "./utils/Ownable.sol";
 
 /// @title SonarMeta model collection
 /// @author SonarX Team
-contract ModelCollection is ERC721 {
+contract ModelCollection is ERC721, Ownable {
 
     // Mapping from token ID to granted addresses
     mapping(uint256 => mapping(address => bool)) private grantedToken;
@@ -15,9 +16,9 @@ contract ModelCollection is ERC721 {
 
     }
 
-    function approveGrant(address to, uint256 tokenId) public {
+    function approveGrant(address from, address to, uint256 tokenId) public {
         address owner = ownerOf(tokenId);
-        require(to != owner, "gtco");
+        require(to != owner, "gtco"); /// grant to current owner
         require(
             _msgSender() == owner,
             "np"
@@ -51,9 +52,8 @@ contract ModelCollection is ERC721 {
         grantedToken[tokenId][to] = true;
     }
 
-    function mint(address to, uint256 tokenId) public {
+    function mint(address to, uint256 tokenId) public onlyOwner {
         _safeMint(to, tokenId);
     }
-
 
 }

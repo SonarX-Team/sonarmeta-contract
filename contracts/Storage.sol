@@ -9,8 +9,12 @@ contract Storage {
 
     mapping(address => bool) internal appliedAirdropWhitelist;
 
+    Governance internal governance;
+
     Token internal ERC20Token;
 
     ModelCollection internal ERC721ModelCollection;
+
+
 
 }
