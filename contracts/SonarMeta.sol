@@ -11,12 +11,13 @@ import "./Governance.sol";
 /// @author SonarX Team
 contract SonarMeta is Governance, Storage, Events, ReentrancyGuard, Context, Config, Ownable {
 
-    constructor(address _tokenAddress, address _modelCollectionAddress, address _governanceAddress) {
+    constructor(address _tokenAddress, address _modelCollectionAddress, address _sceneCollectionAddress, address _governanceAddress) {
         initializeReentrancyGuard();
 
         governance = Governance(_governanceAddress);
         ERC20Token = Token(_tokenAddress);
         ERC721ModelCollection = ModelCollection(_modelCollectionAddress);
+        ModifiedERC998SceneCollection = SceneCollection(_sceneCollectionAddress);
     }
 
     function applyForAirdrop() external nonReentrant {
@@ -52,6 +53,34 @@ contract SonarMeta is Governance, Storage, Events, ReentrancyGuard, Context, Con
         governance.requireController(_msgSender());
         require(_to!= address(0), "ti0");
         ERC721ModelCollection.mint(_to, _tokenId);
+    }
+
+    function grantERC998UsingSonarMetaApproval(uint256 _tokenId, address _to) external nonReentrant {
+        governance.requireController(_msgSender());
+        require(_to != address(0), "ti0");
+        address owner = ModifiedERC998SceneCollection.ownerOf(_tokenId);
+        /// @dev owner cannot be '0' because it is checked inside 'ownerOf'.
+        ModifiedERC998SceneCollection.grantFrom(owner, _to, _tokenId);
+    }
+
+    function transferERC998UsingSonarMetaApproval(uint256 _tokenId, address _to) external nonReentrant {
+        governance.requireController(_msgSender());
+        require(_to != address(0), "ti0");
+        address owner = ModifiedERC998SceneCollection.ownerOf(_tokenId);
+        /// @dev owner cannot be '0' because it is checked inside 'ownerOf'.
+        ModifiedERC998SceneCollection.transferFrom(owner, _to, _tokenId);
+    }
+
+    function mintERC998(address _to, uint256 _tokenId) external nonReentrant {
+        governance.requireController(_msgSender());
+        require(_to!= address(0), "ti0");
+        ModifiedERC998SceneCollection.mint(_to, _tokenId);
+    }
+
+    function mintERC998WithBatchTokens(address _to, uint256 _tokenId, uint256[] calldata _childTokenIds) external nonReentrant {
+        governance.requireController(_msgSender());
+        require(_to!= address(0), "ti0");
+        ModifiedERC998SceneCollection.mintFromBatchTokens(_to, _tokenId, _childTokenIds);
     }
 
 }

@@ -18,7 +18,8 @@ contract ModelCollection is ERC721, Ownable {
 
     function approveGrant(address from, address to, uint256 tokenId) public {
         address owner = ownerOf(tokenId);
-        require(to != owner, "gtco"); /// grant to current owner
+        require(to != owner, "gtco");
+        /// grant to current owner
         require(
             _msgSender() == owner,
             "np"
@@ -53,7 +54,13 @@ contract ModelCollection is ERC721, Ownable {
     }
 
     function mint(address to, uint256 tokenId) public onlyOwner {
+        require(to != address(0), "ti0");
         _safeMint(to, tokenId);
+    }
+
+    function isGranted(address _address, uint256 tokenId) public view returns (bool) {
+        _requireMinted(tokenId);
+        return grantedToken[tokenId][_address];
     }
 
 }

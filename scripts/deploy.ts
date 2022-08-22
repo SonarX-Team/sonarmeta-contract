@@ -14,13 +14,11 @@ async function main() {
 
   // 准备好后端的钱包地址
 
-  // 部署Token和Collection
+  // 部署Token和ModelCollection, SceneCollection
   // 部署Governance
   // 部署主合约（该地址为前端的目标地址）
-  // 将Token和Collection的Owner转移给主合约
+  // 将Token和ModelCollection, SceneCollection的Owner转移给主合约
   // 在Governance中添加后端地址作为Controller
-
-
   console.log("Lock with 1 ETH deployed to:", lock.address);
 }
 
