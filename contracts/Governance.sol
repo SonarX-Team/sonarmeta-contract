@@ -10,6 +10,12 @@ contract Governance {
     /// @notice Address which belongs to SonarMeta, taking control of tokens
     mapping(address => bool) public networkControllers;
 
+    /// @notice Address which controls treasures for contract
+    address public treasury;
+
+    constructor() {
+        networkGovernor = msg.sender;
+    }
 
     /// @notice Check if specified address is is governor
     /// @param _address Address to check
@@ -40,5 +46,13 @@ contract Governance {
         if (networkControllers[_controller] != _active) {
             networkControllers[_controller] = _active;
         }
+    }
+
+    /// @notice Change address that controls treasured
+    /// @notice Can be called only by governor
+    /// @param _newTreasury new treasury address
+    function setTreasury(address _newTreasury) external {
+        requireGovernor(msg.sender);
+        treasury = _newTreasury;
     }
 }

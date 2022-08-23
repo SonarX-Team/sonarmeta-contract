@@ -1,9 +1,13 @@
 import {HardhatUserConfig} from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
+import "@nomicfoundation/hardhat-chai-matchers";
 
 const config: HardhatUserConfig = {
     solidity: "0.8.9",
     networks: {
+        hardhat: {
+
+        },
         ganache: {
             url: 'http://localhost:7545',
             accounts: [
@@ -18,7 +22,13 @@ const config: HardhatUserConfig = {
             url: 'https://ethereum-rinkeby.s.chainbase.online/v1/2Dhf8fn69zor7wXkQU0NxVm8jGq',
             accounts: []
         }
-    }
+    },
+    paths: {
+        sources: "./contracts",
+        tests: "./test",
+        cache: "./cache",
+        artifacts: "./artifacts"
+    },
 };
 
 export default config;

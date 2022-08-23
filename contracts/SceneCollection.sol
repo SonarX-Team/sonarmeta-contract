@@ -22,7 +22,7 @@ contract SceneCollection is ERC721, Ownable {
         components = ModelCollection(_componentsAddress);
     }
 
-    function approveGrant(address from, address to, uint256 tokenId) public {
+    function approveGrant(address to, uint256 tokenId) public {
         address owner = ownerOf(tokenId);
         require(to != owner, "gtco");
         /// grant to current owner
@@ -53,6 +53,11 @@ contract SceneCollection is ERC721, Ownable {
         return approvedGranting[tokenId][addr];
     }
 
+    function isGranted(address _address, uint256 tokenId) public view returns (bool) {
+        _requireMinted(tokenId);
+        return grantedToken[tokenId][_address];
+    }
+
     function _grant(address from, address to, uint256 tokenId) internal {
         require(ownerOf(tokenId) == from, "fno");
         require(to != address(0), "ti0");
@@ -68,6 +73,7 @@ contract SceneCollection is ERC721, Ownable {
         _requireMinted(tokenId);
         address owner = ownerOf(tokenId);
         require(components.ownerOf(childTokenId) == owner || components.isGranted(owner, childTokenId), "np");
+        require(combination[tokenId][childTokenId] == false, "ha");
         combination[tokenId][childTokenId] = true;
     }
 
@@ -79,9 +85,8 @@ contract SceneCollection is ERC721, Ownable {
         _requireMinted(tokenId);
         address owner = ownerOf(tokenId);
         require(components.ownerOf(childTokenId) == owner || components.isGranted(owner, childTokenId), "np");
-        if (combination[tokenId][childTokenId]) {
-            combination[tokenId][childTokenId] = false;
-        }
+        require(combination[tokenId][childTokenId] == true, "na");
+        combination[tokenId][childTokenId] = false;
     }
 
     function mint(address to, uint256 tokenId) public onlyOwner {
@@ -98,4 +103,5 @@ contract SceneCollection is ERC721, Ownable {
             _addChild(tokenId, childTokenId);
         }
     }
+
 }

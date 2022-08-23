@@ -26,6 +26,12 @@ contract SonarMeta is Governance, Storage, Events, ReentrancyGuard, Context, Con
         appliedAirdropWhitelist[_msgSender()] = true;
     }
 
+    function fundTreasury(uint256 _amount) external nonReentrant {
+        governance.requireController(_msgSender());
+        require(governance.treasury() != address(0), "tsi0");
+        ERC20Token.airdrop(governance.treasury(), _amount);
+    }
+
     function transferERC20UsingSonarMetaAllowance(address _to, uint256 _amount) external nonReentrant {
         governance.requireController(_msgSender());
         require(_amount != 0, "ai0");

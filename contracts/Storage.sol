@@ -9,7 +9,7 @@ import "./SceneCollection.sol";
 /// @author SonarX Team
 contract Storage {
 
-    mapping(address => bool) internal appliedAirdropWhitelist;
+    mapping(address => bool) public appliedAirdropWhitelist;
 
     Governance internal governance;
 
