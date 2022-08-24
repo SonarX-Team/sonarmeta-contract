@@ -2,10 +2,15 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./utils/Ownable.sol";
+import "./utils/Counters.sol";
 
 /// @title SonarMeta model collection
 /// @author SonarX Team
 contract ModelCollection is ERC721, Ownable {
+
+//    using Counters for Counters.Counter;
+//    // Auto increment counter
+//    Counters.Counter private tokenIds;
 
     // Mapping from token ID to granted addresses
     mapping(uint256 => mapping(address => bool)) private grantedToken;
