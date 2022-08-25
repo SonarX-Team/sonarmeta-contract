@@ -8,9 +8,9 @@ import "./utils/Counters.sol";
 /// @author SonarX Team
 contract ModelCollection is ERC721, Ownable {
 
-//    using Counters for Counters.Counter;
-//    // Auto increment counter
-//    Counters.Counter private tokenIds;
+    using Counters for Counters.Counter;
+    // Auto increment counter
+    Counters.Counter private _index;
 
     // Mapping from token ID to granted addresses
     mapping(uint256 => mapping(address => bool)) private grantedToken;
@@ -64,9 +64,12 @@ contract ModelCollection is ERC721, Ownable {
         grantedToken[tokenId][to] = true;
     }
 
-    function mint(address to, uint256 tokenId) public onlyOwner {
+    function mint(address to) public onlyOwner returns(uint256) {
         require(to != address(0), "ti0");
-        _safeMint(to, tokenId);
+        uint256 index = _index.current();
+        _safeMint(to, index);
+        _index.increment();
+        return index;
     }
 
 }

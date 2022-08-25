@@ -93,99 +93,99 @@ describe("SonarMeta", async function () {
     describe('ERC721', async function () {
         it("Controller mint for user", async function () {
             const {governance, sonarmeta, models, accounts} = await loadFixture(deployContracts);
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address, 1);
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address);
             await expect(await models.balanceOf(accounts.user1.address)).to.equal(1);
-            await expect(await models.ownerOf(1)).to.equal(accounts.user1.address);
+            await expect(await models.ownerOf(0)).to.equal(accounts.user1.address);
         });
         it("Should reverted with not controller", async function () {
             const {governance, sonarmeta, models, accounts} = await loadFixture(deployContracts);
-            await expect(sonarmeta.connect(accounts.user1).mintERC721(accounts.user1.address, 1)).to.be.revertedWith('nc')
+            await expect(sonarmeta.connect(accounts.user1).mintERC721(accounts.user1.address)).to.be.revertedWith('nc')
         });
         it("User approve contract and contract transfer using approval", async function () {
             const {accounts, sonarmeta, models} = await loadFixture(deployContracts);
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address, 1);
-            await expect(models.connect(accounts.user2).approve(sonarmeta.address, 1)).to.be.revertedWith('ERC721: approve caller is not token owner nor approved for all');
-            await models.connect(accounts.user1).approve(sonarmeta.address, 1)
-            expect(sonarmeta.connect(accounts.user1).transferERC721UsingSonarMetaApproval(1, accounts.user2.address)).to.be.revertedWith('nc')
-            await sonarmeta.connect(accounts.controller1).transferERC721UsingSonarMetaApproval(1, accounts.user2.address);
-            await expect(await models.ownerOf(1)).to.equal(accounts.user2.address);
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address)
+            await expect(models.connect(accounts.user2).approve(sonarmeta.address, 0)).to.be.revertedWith('ERC721: approve caller is not token owner nor approved for all');
+            await models.connect(accounts.user1).approve(sonarmeta.address, 0)
+            expect(sonarmeta.connect(accounts.user1).transferERC721UsingSonarMetaApproval(0, accounts.user2.address)).to.be.revertedWith('nc')
+            await sonarmeta.connect(accounts.controller1).transferERC721UsingSonarMetaApproval(0, accounts.user2.address);
+            await expect(await models.ownerOf(0)).to.equal(accounts.user2.address);
             await expect(await models.balanceOf(accounts.user2.address)).to.equal(1);
         })
         it("User approve contract to grant and contract grant using approval", async function () {
             const {accounts, sonarmeta, models} = await loadFixture(deployContracts);
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address, 1);
-            await expect(models.connect(accounts.user2).approveGrant(sonarmeta.address, 1)).to.be.revertedWith('np');
-            await models.connect(accounts.user1).approveGrant(sonarmeta.address, 1)
-            expect(sonarmeta.connect(accounts.user1).grantERC721UsingSonarMetaApproval(1, accounts.user2.address)).to.be.revertedWith('nc')
-            await sonarmeta.connect(accounts.controller1).grantERC721UsingSonarMetaApproval(1, accounts.user2.address);
-            await expect(await models.ownerOf(1)).to.equal(accounts.user1.address);
-            await expect(await models.isGranted(accounts.user2.address, 1)).to.equal(true);
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address)
+            await expect(models.connect(accounts.user2).approveGrant(sonarmeta.address, 0)).to.be.revertedWith('np');
+            await models.connect(accounts.user1).approveGrant(sonarmeta.address, 0)
+            expect(sonarmeta.connect(accounts.user1).grantERC721UsingSonarMetaApproval(0, accounts.user2.address)).to.be.revertedWith('nc')
+            await sonarmeta.connect(accounts.controller1).grantERC721UsingSonarMetaApproval(0, accounts.user2.address);
+            await expect(await models.ownerOf(0)).to.equal(accounts.user1.address);
+            await expect(await models.isGranted(accounts.user2.address, 0)).to.equal(true);
         })
     });
 
     describe('ERC998', async function () {
         it("Controller mint for user", async function () {
             const {governance, sonarmeta, scenes, accounts} = await loadFixture(deployContracts);
-            await sonarmeta.connect(accounts.controller1).mintERC998(accounts.user1.address, 1);
+            await sonarmeta.connect(accounts.controller1).mintERC998(accounts.user1.address);
             await expect(await scenes.balanceOf(accounts.user1.address)).to.equal(1);
-            await expect(await scenes.ownerOf(1)).to.equal(accounts.user1.address);
+            await expect(await scenes.ownerOf(0)).to.equal(accounts.user1.address);
         });
         it("User approve contract and contract transfer using approval", async function () {
             const {accounts, sonarmeta, scenes} = await loadFixture(deployContracts);
-            await sonarmeta.connect(accounts.controller1).mintERC998(accounts.user1.address, 1);
-            await expect(scenes.connect(accounts.user2).approve(sonarmeta.address, 1)).to.be.revertedWith('ERC721: approve caller is not token owner nor approved for all');
-            await scenes.connect(accounts.user1).approve(sonarmeta.address, 1)
-            expect(sonarmeta.connect(accounts.user1).transferERC998UsingSonarMetaApproval(1, accounts.user2.address)).to.be.revertedWith('nc')
-            await sonarmeta.connect(accounts.controller1).transferERC998UsingSonarMetaApproval(1, accounts.user2.address);
-            await expect(await scenes.ownerOf(1)).to.equal(accounts.user2.address);
+            await sonarmeta.connect(accounts.controller1).mintERC998(accounts.user1.address);
+            await expect(scenes.connect(accounts.user2).approve(sonarmeta.address, 0)).to.be.revertedWith('ERC721: approve caller is not token owner nor approved for all');
+            await scenes.connect(accounts.user1).approve(sonarmeta.address, 0)
+            expect(sonarmeta.connect(accounts.user1).transferERC998UsingSonarMetaApproval(0, accounts.user2.address)).to.be.revertedWith('nc')
+            await sonarmeta.connect(accounts.controller1).transferERC998UsingSonarMetaApproval(0, accounts.user2.address);
+            await expect(await scenes.ownerOf(0)).to.equal(accounts.user2.address);
             await expect(await scenes.balanceOf(accounts.user2.address)).to.equal(1);
         })
         it("User approve contract to grant and contract grant using approval", async function () {
             const {accounts, sonarmeta, scenes} = await loadFixture(deployContracts);
-            await sonarmeta.connect(accounts.controller1).mintERC998(accounts.user1.address, 1);
-            await expect(scenes.connect(accounts.user2).approveGrant(sonarmeta.address, 1)).to.be.revertedWith('np');
-            await scenes.connect(accounts.user1).approveGrant(sonarmeta.address, 1)
-            expect(sonarmeta.connect(accounts.user1).grantERC998UsingSonarMetaApproval(1, accounts.user2.address)).to.be.revertedWith('nc')
-            await sonarmeta.connect(accounts.controller1).grantERC998UsingSonarMetaApproval(1, accounts.user2.address);
-            await expect(await scenes.ownerOf(1)).to.equal(accounts.user1.address);
-            await expect(await scenes.isGranted(accounts.user2.address, 1)).to.equal(true);
+            await sonarmeta.connect(accounts.controller1).mintERC998(accounts.user1.address);
+            await expect(scenes.connect(accounts.user2).approveGrant(sonarmeta.address, 0)).to.be.revertedWith('np');
+            await scenes.connect(accounts.user1).approveGrant(sonarmeta.address, 0)
+            expect(sonarmeta.connect(accounts.user1).grantERC998UsingSonarMetaApproval(0, accounts.user2.address)).to.be.revertedWith('nc')
+            await sonarmeta.connect(accounts.controller1).grantERC998UsingSonarMetaApproval(0, accounts.user2.address);
+            await expect(await scenes.ownerOf(0)).to.equal(accounts.user1.address);
+            await expect(await scenes.isGranted(accounts.user2.address, 0)).to.equal(true);
         })
         it("Should reverted with no privilege to add tokens", async function () {
             const {governance, sonarmeta, scenes, accounts} = await loadFixture(deployContracts);
-            await sonarmeta.connect(accounts.controller1).mintERC998(accounts.user1.address, 1);
-            await expect(scenes.connect(accounts.user1).addChild(1, 1)).to.be.revertedWith('ERC721: invalid token ID')
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user2.address, 1);
-            await expect(scenes.connect(accounts.user1).addChild(1, 1)).to.be.revertedWith('np');
+            await sonarmeta.connect(accounts.controller1).mintERC998(accounts.user1.address);
+            await expect(scenes.connect(accounts.user1).addChild(0, 0)).to.be.revertedWith('ERC721: invalid token ID')
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user2.address);
+            await expect(scenes.connect(accounts.user1).addChild(0, 0)).to.be.revertedWith('np');
         });
         it("Add or remove child tokens", async function () {
             const {governance, sonarmeta, scenes, accounts, models} = await loadFixture(deployContracts);
-            await sonarmeta.connect(accounts.controller1).mintERC998(accounts.user1.address, 1);
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address, 1);
-            await scenes.connect(accounts.user1).addChild(1, 1);
+            await sonarmeta.connect(accounts.controller1).mintERC998(accounts.user1.address);
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address);
+            await scenes.connect(accounts.user1).addChild(0, 0);
 
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user2.address, 2);
-            await models.connect(accounts.user2).approveGrant(sonarmeta.address, 2);
-            await sonarmeta.connect(accounts.controller1).grantERC721UsingSonarMetaApproval(2, accounts.user1.address);
-            await scenes.connect(accounts.user1).addChild(1, 2);
-            await scenes.connect(accounts.user1).removeChild(1, 2);
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user2.address);
+            await models.connect(accounts.user2).approveGrant(sonarmeta.address, 1);
+            await sonarmeta.connect(accounts.controller1).grantERC721UsingSonarMetaApproval(1, accounts.user1.address);
+            await scenes.connect(accounts.user1).addChild(0, 1);
+            await scenes.connect(accounts.user1).removeChild(0, 1);
         });
         it("Mint with multiple childs", async function () {
             const {governance, sonarmeta, scenes, accounts, models} = await loadFixture(deployContracts);
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address, 1);
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address, 2);
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address, 3);
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address, 4);
-            await sonarmeta.connect(accounts.controller1).mintERC998WithBatchTokens(accounts.user1.address, 1, [1,2,3,4]);
-            await expect(await scenes.ownerOf(1)).to.equal(accounts.user1.address);
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address);
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address);
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address);
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address);
+            await sonarmeta.connect(accounts.controller1).mintERC998WithBatchTokens(accounts.user1.address,  [0,1,2,3]);
+            await expect(await scenes.ownerOf(0)).to.equal(accounts.user1.address);
             await expect(await scenes.balanceOf(accounts.user1.address)).to.equal(1);
         });
         it("Should create NFT failed using batch child tokenIds containing some unprivileged token", async function () {
             const {governance, sonarmeta, scenes, accounts, models} = await loadFixture(deployContracts);
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address, 1);
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address, 2);
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address, 3);
-            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address, 4);
-            await expect(sonarmeta.connect(accounts.controller1).mintERC998WithBatchTokens(accounts.user1.address, 1, [1,2,3,4,5])).to.be.revertedWith('ERC721: invalid token ID');
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address);
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address);
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address);
+            await sonarmeta.connect(accounts.controller1).mintERC721(accounts.user1.address);
+            await expect(sonarmeta.connect(accounts.controller1).mintERC998WithBatchTokens(accounts.user1.address, [1,2,3,4,0])).to.be.revertedWith('ERC721: invalid token ID');
             await expect(await scenes.balanceOf(accounts.user1.address)).to.equal(0);
         });
     });

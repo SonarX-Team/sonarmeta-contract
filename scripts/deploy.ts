@@ -1,13 +1,16 @@
 import {ethers} from "hardhat";
+import * as fs from "fs";
 
 async function main() {
+    const network: any = process.env.HARDHAT_NETWORK;
     // Come from the hardhat.config.ts, the first account is the default account to deploy contracts.
     const [owner, controller1, controller2, user1, user2, otherAccount] = await ethers.getSigners();
 
     // deploy tokens
+    console.log('Deploy contracts in ' + network)
     console.log('Deploy tokens...')
     const Token = await ethers.getContractFactory("Token");
-    const token = await Token.deploy('SonarMeta Token', 'SMT');
+    const token = await Token.deploy('SonarMeta Token', 'BSL');
     await token.deployed();
     console.log('Deploy model collection...')
     const Models = await ethers.getContractFactory("ModelCollection");
@@ -39,12 +42,17 @@ async function main() {
     await governance.setController(controller2.address, true);
 
     // save the addresses
-    console.log({
+    const addresses = {
         main: sonarmeta.address,
         governance: governance.address,
         ERC20: token.address,
         ERC721: models.address,
         ERC998: scenes.address
+    }
+    console.log(addresses)
+    fs.writeFile(`address-${network}.json`, JSON.stringify(addresses, undefined, 4), err => {
+        if (err) console.log('Write file error: ' + err.message)
+        else console.log(`Addresses is saved into address-${network}.json...`)
     })
 }
 

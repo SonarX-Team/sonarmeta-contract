@@ -3,10 +3,15 @@ pragma solidity ^0.8.0;
 import "./utils/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./ModelCollection.sol";
+import "./utils/Counters.sol";
 
 /// @title SonarMeta scene collection
 /// @author SonarX Team
 contract SceneCollection is ERC721, Ownable {
+
+    using Counters for Counters.Counter;
+    // Auto increment counter
+    Counters.Counter private _index;
 
     ModelCollection private components;
 
@@ -89,19 +94,26 @@ contract SceneCollection is ERC721, Ownable {
         combination[tokenId][childTokenId] = false;
     }
 
-    function mint(address to, uint256 tokenId) public onlyOwner {
+    function mint(address to) public onlyOwner returns(uint256) {
         require(to != address(0), "ti0");
-        _safeMint(to, tokenId);
+        uint256 index = _index.current();
+        _safeMint(to, index);
+        _index.increment();
+        return index;
     }
 
-    function mintFromBatchTokens(address to, uint256 tokenId, uint256[] calldata childTokenIds) public onlyOwner {
+    function mintFromBatchTokens(address to, uint256[] calldata childTokenIds) public onlyOwner returns(uint256) {
         require(to != address(0), "ti0");
-        _safeMint(to, tokenId);
+        uint256 index = _index.current();
+        _safeMint(to, index);
 
         for (uint256 i = 0; i < childTokenIds.length; ++i) {
             uint256 childTokenId = childTokenIds[i];
-            _addChild(tokenId, childTokenId);
+            _addChild(index, childTokenId);
         }
+
+        _index.increment();
+        return index;
     }
 
 }
