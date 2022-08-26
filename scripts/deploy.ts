@@ -35,6 +35,10 @@ async function main() {
     await token.transferOwnership(sonarmeta.address)
     await models.transferOwnership(sonarmeta.address)
     await scenes.transferOwnership(sonarmeta.address)
+    // set treasury
+    console.log('Set Controller 1 as Treasury...')
+    await governance.setTreasury(controller1.address)
+
     // add controller
     console.log('Add controllers...')
     await governance.setController(owner.address, true);
