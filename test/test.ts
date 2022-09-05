@@ -51,7 +51,7 @@ describe("SonarMeta", async function () {
         it("Should apply for airdrop successfully", async function () {
             const {sonarmeta, token, accounts} = await loadFixture(deployContracts);
             await sonarmeta.connect(accounts.user1).applyForAirdrop();
-            await expect(await token.balanceOf(accounts.user1.address)).to.equal(1000);
+            await expect(await token.balanceOf(accounts.user1.address)).to.equal('1000000000000000000000');
         });
 
         it("Should revert with applied already", async function () {
@@ -88,6 +88,21 @@ describe("SonarMeta", async function () {
             await token.connect(accounts.user1).transfer(treasury.address, 100);
             await expect(await token.balanceOf(treasury.address)).to.equal(1000000);
         })
+
+        it("Approve and use allowance", async function () {
+            const {sonarmeta, token, accounts} = await loadFixture(deployContracts);
+            // apply for airdrop
+            await sonarmeta.connect(accounts.user1).applyForAirdrop();
+            await expect(await token.balanceOf(accounts.user1.address)).to.equal('1000000000000000000000');
+            // approve
+            await token.connect(accounts.user1).approve(sonarmeta.address, (100 * 1e18).toString())
+            await expect(await token.allowance(accounts.user1.address, sonarmeta.address)).to.equal('100000000000000000000'.toString());
+            // spend
+            await sonarmeta.connect(accounts.controller1).transferERC20UsingSonarMetaAllowance(accounts.user1.address, accounts.user2.address, '100000000000000000000')
+            await expect(await token.balanceOf(accounts.user1.address)).to.equal('900000000000000000000');
+            await expect(await token.balanceOf(accounts.user2.address)).to.equal('100000000000000000000');
+        })
+
     });
 
     describe('ERC721', async function () {

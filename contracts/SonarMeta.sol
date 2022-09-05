@@ -34,11 +34,12 @@ contract SonarMeta is Storage, Events, ReentrancyGuard, Context, Config, Ownable
         emit Fund(governance.treasury(), _amount);
     }
 
-    function transferERC20UsingSonarMetaAllowance(address _to, uint256 _amount) external nonReentrant {
+    function transferERC20UsingSonarMetaAllowance(address _from, address _to, uint256 _amount) external nonReentrant {
         governance.requireController(_msgSender());
         require(_amount != 0, "ai0");
+        require(_from != address(0), "fi0");
         require(_to != address(0), "ti0");
-        require(ERC20Token.transferFrom(address(this), _to, _amount), "tf");
+        require(ERC20Token.transferFrom(_from, _to, _amount), "tf");
     }
 
     function grantERC721UsingSonarMetaApproval(uint256 _tokenId, address _to) external nonReentrant {
